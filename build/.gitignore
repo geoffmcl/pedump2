@@ -1,5 +1,6 @@
 *.vcxproj
 *.filters
+*.user
 CMakeCache.txt
 CMakeFiles/*
 Debug/*
@@ -9,3 +10,5 @@ cmake_install.cmake
 *.dir/*
 *.sln
 x64/*
+.vs/*
+*.VC.db
