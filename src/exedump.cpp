@@ -120,6 +120,8 @@ void DumpImportsSection32(BYTE *base, PIMAGE_NT_HEADERS pNTHeader)
     DWORD importsStartRVA;
 	PSTR pszTimeDate;
     DWORD count = 0;
+    DWORD totentries = 0;
+    DWORD hdrcnt = 0;
 
     // Look up where the imports section is (normally in the .idata section)
     // but not necessarily so.  Therefore, grab the RVA from the data dir.
@@ -198,12 +200,14 @@ void DumpImportsSection32(BYTE *base, PIMAGE_NT_HEADERS pNTHeader)
         }
     
         SPRTF("  Ordn  Name\n");
-        
+        hdrcnt = 0;
         while ( 1 ) // Loop forever (or until we break out)
         {
             if ( thunk->u1.AddressOfData == 0 )
                 break;
 
+            hdrcnt++;
+            totentries++;
             if ( thunk->u1.Ordinal & IMAGE_ORDINAL_FLAG32 )
             {
                 SPRTF( "  %4u", IMAGE_ORDINAL32(thunk->u1.Ordinal) );
@@ -229,11 +233,11 @@ void DumpImportsSection32(BYTE *base, PIMAGE_NT_HEADERS pNTHeader)
             thunk++;            // Advance to next thunk
             thunkIAT++;         // advance to next thunk
         }
-
+        SPRTF("Done %u entries.\n", hdrcnt);
         importDesc++;   // advance to next IMAGE_IMPORT_DESCRIPTOR
         SPRTF("\n");
     }
-    SPRTF("Done %u imports...\n", count);
+    SPRTF("Done %u imports... total %u entries...\n", count, totentries);
 }
 
 void DumpImportsSection64(BYTE *base, PIMAGE_NT_HEADERS pNTHeader)
@@ -246,6 +250,8 @@ void DumpImportsSection64(BYTE *base, PIMAGE_NT_HEADERS pNTHeader)
     DWORD importsStartRVA;
     PSTR pszTimeDate;
     DWORD count = 0;
+    DWORD totentries = 0;
+    DWORD hdrcnt = 0;
 
     // Look up where the imports section is (normally in the .idata section)
     // but not necessarily so.  Therefore, grab the RVA from the data dir.
@@ -324,12 +330,14 @@ void DumpImportsSection64(BYTE *base, PIMAGE_NT_HEADERS pNTHeader)
         }
 
         SPRTF("  Ordn  Name\n");
-
+        hdrcnt = 0;
         while (1) // Loop forever (or until we break out)
         {
             if (thunk->u1.AddressOfData == 0)
                 break;
 
+            hdrcnt++;
+            totentries++;
             if (thunk->u1.Ordinal & IMAGE_ORDINAL_FLAG64)
             {
                 SPRTF("  %4u", IMAGE_ORDINAL64(thunk->u1.Ordinal));
@@ -356,11 +364,11 @@ void DumpImportsSection64(BYTE *base, PIMAGE_NT_HEADERS pNTHeader)
             thunk++;            // Advance to next thunk
             thunkIAT++;         // advance to next thunk
         }
-
+        SPRTF("Done %u entries\n", hdrcnt);
         importDesc++;   // advance to next IMAGE_IMPORT_DESCRIPTOR
         SPRTF("\n");
     }
-    SPRTF("Done %u imports...\n", count);
+    SPRTF("Done %u imports... total %u entries...\n", count, totentries);
 }
 
 void DumpImportsSection(BYTE *base, PIMAGE_NT_HEADERS pNTHeader)
