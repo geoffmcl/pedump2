@@ -289,7 +289,8 @@ static void oi( char * psin )
       }
 
       if( addstdout ) {
-         fwrite( ps, 1, len, stderr );  /* 20170917 - Switch to using 'stderr' in place of 'stdout' */
+         // fwrite( ps, 1, len, stderr );  /* 20170917 - Switch to using 'stderr' in place of 'stdout' */
+         fwrite(ps, 1, len, stdout);  /* 20180117 - Switch back to using 'stdout' in place of 'stderr' */
       }
 #ifdef ADD_LISTVIEW
        if (add2listview) {
