@@ -94,6 +94,9 @@
 @echo.
 @if "%ADDINST%" == "1" goto CHKINST
 @echo No install configured... set ADDINST=1
+@echo Use updexe.bat to copy the EXE to C:\MDOS... 
+@echo Above bat requires 'fc4' - https://github.com/geoffmcl/FC4
+@echo if you want a compare, and only copy if different...
 @echo.
 @goto END
 :CHKINST
