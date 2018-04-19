@@ -787,6 +787,9 @@ void DumpExeFile( PIMAGE_DOS_HEADER dosHeader )
     PIMAGE_OPTIONAL_HEADER32 opt32 = 0;
     
     DumpHeader((PIMAGE_FILE_HEADER)&pNTHeader->FileHeader);
+    if (fShowMachineType)
+        return;
+
     SPRTF("\n");
 
     if (header32->OptionalHeader.Magic == IMAGE_NT_OPTIONAL_HDR32_MAGIC) { // PE32

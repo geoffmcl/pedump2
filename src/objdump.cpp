@@ -82,6 +82,9 @@ void DumpObjFile( PIMAGE_FILE_HEADER pImageFileHeader )
     PIMAGE_SECTION_HEADER pSections;
     
     DumpHeader(pImageFileHeader);
+    if (fShowMachineType)
+        return;
+
     SPRTF("\n");
 
     pSections = MakePtr(PIMAGE_SECTION_HEADER, (pImageFileHeader+1),

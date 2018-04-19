@@ -195,7 +195,8 @@ void DumpHeader(PIMAGE_FILE_HEADER pImageFileHeader)
     UINT headerFieldWidth = 30;
     UINT i;
     
-    SPRTF("File Header:\n");
+    if (!fShowMachineType)
+        SPRTF("File Header:\n");
     if (!IsAddressInRange((BYTE *)pImageFileHeader, (int)sizeof(IMAGE_FILE_HEADER))) {
         SPRTF("TODO: PIMAGE_FILE_HEADER out of range - %p\n", pImageFileHeader);
         return;
@@ -213,6 +214,8 @@ void DumpHeader(PIMAGE_FILE_HEADER pImageFileHeader)
 
     if (pImageFileHeader->Machine && (cMachineType[0] == 0))   // FIX20171021 - Only collect/show the FIRST instance of this, and ONLY if NOT 0
         sprintf(cMachineType, "PE/OBJ: Machine Type: %04x (%s)", pImageFileHeader->Machine, mt);
+    if (fShowMachineType)
+        return; // all done
 
     SPRTF("  %-*s%04X (%s)\n", headerFieldWidth, "Machine:", 
                 pImageFileHeader->Machine,

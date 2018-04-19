@@ -15,6 +15,7 @@ extern BOOL fShowLineNumbers;
 extern BOOL fShowIATentries;
 extern BOOL fShowPDATA;
 extern BOOL fShowResources;
+extern BOOL fShowMachineType;
 
 extern PIMAGE_COFF_SYMBOLS_HEADER g_pCOFFHeader;
 extern PIMAGE_DEBUG_MISC g_pMiscDebugInfo;

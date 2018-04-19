@@ -139,31 +139,39 @@ void DumpLibFile( LPVOID lpFileBase )
     {
         DWORD thisMemberSize;
         DWORD fileOffset = (DWORD)((PBYTE)pArchHeader - (PBYTE)lpFileBase);
-        DisplayArchiveMemberHeader(pArchHeader, fileOffset);
-        SPRTF("\n");
+        if (!fShowMachineType) {
+            DisplayArchiveMemberHeader(pArchHeader, fileOffset);
+            SPRTF("\n");
+        }
 
         if ( !strncmp( 	(char *)pArchHeader->Name,
         				IMAGE_ARCHIVE_LINKER_MEMBER, 16) )
         {
             if ( !fSawFirstLinkerMember )
             {
-                DumpFirstLinkerMember( (PVOID)(pArchHeader + 1) );
-                SPRTF("\n");
+                if (!fShowMachineType) {
+                    DumpFirstLinkerMember((PVOID)(pArchHeader + 1));
+                    SPRTF("\n");
+                }
                 fSawFirstLinkerMember = TRUE;
             }
             else if ( !fSawSecondLinkerMember )
             {
-                DumpSecondLinkerMember( (PVOID)(pArchHeader + 1) );
-                SPRTF("\n");
+                if (!fShowMachineType) {
+                    DumpSecondLinkerMember((PVOID)(pArchHeader + 1));
+                    SPRTF("\n");
+                }
                 fSawSecondLinkerMember = TRUE;
             }
         }
         else if( !strncmp(	(char *)pArchHeader->Name,
         					IMAGE_ARCHIVE_LONGNAMES_MEMBER, 16) )
         {
-            DumpLongnamesMember( (PVOID)(pArchHeader + 1),
-                                 atoi((char *)pArchHeader->Size) );
-            SPRTF("\n");
+            if (!fShowMachineType) {
+                DumpLongnamesMember((PVOID)(pArchHeader + 1),
+                    atoi((char *)pArchHeader->Size));
+                SPRTF("\n");
+            }
         }
         else    // It's an OBJ file
         {
@@ -181,6 +189,8 @@ void DumpLibFile( LPVOID lpFileBase )
             }
             if (IsAddressInRange((BYTE *)last, (int)sizeof(IMAGE_SECTION_HEADER))) {
                 DumpObjFile(pifh);
+                if (fShowMachineType)
+                    return;
             }
             else {
                 SPRTF("TODO: section count %u! last PIMAGE_SECTION_HEADER out of range - %p\n", nSects, last);

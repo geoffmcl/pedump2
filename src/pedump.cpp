@@ -31,6 +31,7 @@ BOOL fShowLineNumbers = FALSE;
 BOOL fShowIATentries = FALSE;
 BOOL fShowPDATA = FALSE;
 BOOL fShowResources = FALSE;
+BOOL fShowMachineType = FALSE;
 
 #if defined(IMAGE_SIZEOF_ROM_OPTIONAL_HEADER)
 #define ADD_DUMP_ROM_IMAGE
@@ -55,8 +56,10 @@ void show_help()
     SPRTF("  /L    include line number information (def=%s)\n", fShowLineNumbers ? "on" : "off");
     SPRTF("  /P    include PDATA (runtime functions) (def=%s)\n", fShowPDATA ? "on" : "off");
     SPRTF("  /R    include detailed resources (stringtables and dialogs) (def=%s)\n", fShowResources ? "on" : "off");
+    SPRTF("  /M    Show ONLY machine type. (def=%s)\n", fShowMachineType ? "on" : "off");
     SPRTF("  /S    show symbol table (def=%s)\n", fShowSymbolTable ? "on" : "off");
     SPRTF("  /?    show this help, and exit(0)\n\n");
+    SPRTF(" Note machine type is always shown, but with the /M switch, only that will be shown.\n");
     SPRTF(" Switches must be space separated, and may optionally be followed by +|-,\n");
     SPRTF(" denoting ON or OFF. Switch alone will be assumed ON. Switches may also use '-'\n");
     SPRTF(" instead of '/', and may be in lower case.\n\n");
@@ -179,8 +182,8 @@ int DumpFile(LPSTR filename)
         return 1;
     }
 
-    SPRTF("Dump of file %s, %s bytes...\n\n", filename,
-        get_nice_number64u(fileSize));
+    if (!fShowMachineType)
+        SPRTF("Dump of file %s, %s bytes...\n\n", filename, get_nice_number64u(fileSize));
     
     fileBgn = (BYTE *)lpFileBase;
     fileEnd = fileBgn + fileSize;
@@ -283,6 +286,10 @@ int ProcessCommandLine(int argc, char *argv[])
             case 'r':
                 fShowResources = sw;
                 break;
+            case 'M':
+            case 'm':
+                fShowMachineType = sw;
+                break;
             case '?':
                 show_help();
                 return 2;
@@ -336,7 +343,8 @@ int main(int argc, char *argv[])
     if (cMachineType[0])
         SPRTF("%s\n", cMachineType);
 
-    SPRTF("\n");
+    if (!fShowMachineType)
+        SPRTF("\n");
 
     return iret;
 }
