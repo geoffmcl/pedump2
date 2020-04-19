@@ -13,7 +13,7 @@ This project uses [CMake](https://cmake.org/) to generate supported native build
  - cmake .. [options]
  - cmake --build . --config Release
  
-There is also a `build-me.bat` which may be of use to you, maybe with some small local modifications to suit your specfic environment. It is presently setup for MSVC 14 in x64 mode...
+There is also a `build-me.bat` which may be of use to you, maybe with some small local modifications to suit your specfic environment. It is setup for MSVC 16 2019, in x64. And a `build-me-vc14.bat`, setup for MSVC 14 in x64 mode...
 
 #### Original ReadMe.txt by Matt Pietrek
 
@@ -27,6 +27,6 @@ You could build the sources with the enclosed PEDUMP.MAK file, but this has been
 
 Enjoy...  
 Geoff.  
-2018-01-12
+2020-04-19 - 2018-01-12
 
 ; eof
