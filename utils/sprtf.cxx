@@ -27,6 +27,10 @@
 
 #include <time.h>
 #include <stdlib.h> /* for exit() in unix */
+#ifdef _WIN32
+#include <fcntl.h>
+#include <io.h> // for setmode, ...
+#endif // _WIN32
 #include "sprtf.hxx"
 
 #ifdef _MSC_VER
@@ -141,6 +145,11 @@ int   open_log_file( void )
       sprtf("ERROR: Failed to open log file [%s] ...\n", logfile);
       /* exit(1); failed */
       return 0;   /* failed */
+   }
+   else {
+#ifdef _WIN32
+       setmode(fileno(stdout), O_BINARY);
+#endif // _WIN32
    }
    return 1; /* success */
 }
