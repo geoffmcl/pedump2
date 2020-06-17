@@ -167,7 +167,7 @@ set(${name}_HDRS
     ${dir}/exedump.h
     ${dir}/extrnvar.h
     ${dir}/libdump.h
-    ${dir}/objdump.H
+    ${dir}/objdump.h
     ${dir}/romimage.h
     ${dir}/coffsymboltable.h
     ${dir}/cv_dbg.h

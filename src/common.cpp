@@ -2,8 +2,11 @@
 // PEDUMP - Matt Pietrek 1997
 // FILE: COMMON.C
 //==================================
-
+#ifdef _WIN32
 #include <windows.h>
+#else // !_WIN32
+// not WIN32 == unix
+#endif // _WIN32 y/n
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

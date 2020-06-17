@@ -12,3 +12,6 @@ cmake_install.cmake
 x64/*
 .vs/*
 *.VC.db
+Makefile
+libutilslib.a
+
