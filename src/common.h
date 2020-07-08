@@ -35,7 +35,7 @@ void DumpRawSectionData(PIMAGE_SECTION_HEADER section,
                         unsigned cSections);
 void DumpDebugDirectory(PIMAGE_DEBUG_DIRECTORY debugDir, DWORD size, BYTE *base);
 void DumpCOFFHeader(PIMAGE_COFF_SYMBOLS_HEADER pDbgInfo);
-void HexDump(PBYTE ptr, DWORD length);
+extern void HexDump(PBYTE ptr, DWORD length, PBYTE pb = 0);
 
 PSTR GetMachineTypeName( WORD wMachineType );
 

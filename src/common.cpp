@@ -1092,19 +1092,26 @@ void DumpRawSectionData(PIMAGE_SECTION_HEADER section,
 //
 // Dump a region of memory in a hexadecimal format
 //
-void HexDump(PBYTE ptr, DWORD length)
+void HexDump(PBYTE ptr, DWORD length, PBYTE pb)
 {
     char buffer[256];
     PSTR buffPtr, buffPtr2;
     unsigned cOutput, i;
     DWORD bytesToGo=length;
+    __int64 off;
 
     while ( bytesToGo  )
     {
         cOutput = bytesToGo >= HEX_DUMP_WIDTH ? HEX_DUMP_WIDTH : bytesToGo;
 
         buffPtr = buffer;
-        buffPtr += sprintf(buffPtr, "%08X:  ", length-bytesToGo );
+        if (pb) {
+            off = ptr - pb;
+            buffPtr += sprintf(buffPtr, "%08llX:  ", off);
+        }
+        else {
+            buffPtr += sprintf(buffPtr, "%08X:  ", length - bytesToGo);
+        }
         buffPtr2 = buffPtr + (HEX_DUMP_WIDTH * 3) + 1;
         
         for ( i=0; i < HEX_DUMP_WIDTH; i++ )

@@ -160,6 +160,7 @@ set(${name}_SRCS
     ${dir}/resdump.cpp
     ${dir}/romimage.cpp
     ${dir}/symboltablesupport.cpp
+    ${dir}/pdbdump.cpp
     )
 set(${name}_HDRS
     ${dir}/common.h
@@ -173,6 +174,7 @@ set(${name}_HDRS
     ${dir}/cv_dbg.h
     ${dir}/resdump.h
     ${dir}/symboltablesupport.h
+    ${dir}/pdbdump.h
     )
 add_executable( ${name} ${${name}_SRCS} ${${name}_HDRS} )
 if (add_LIBS)

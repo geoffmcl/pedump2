@@ -22,6 +22,7 @@
 #include "libdump.h"
 #include "romimage.h"
 #include "extrnvar.h"
+#include "pdbdump.h"
 
 // Global variables set here, and used in EXEDUMP.C and OBJDUMP.C
 BOOL fShowRelocations = FALSE;
@@ -123,6 +124,11 @@ int DumpMemMap(LPVOID lpFileBase)
     {
         DumpLibFile(lpFileBase);
     }
+#ifdef ADD_PDB_DUMP
+    else if (IsPdbFile((char *)lpFileBase, fileSize)) {
+        DumpPdbFile((char *)lpFileBase, fileSize);
+    }
+#endif // #ifdef ADD_PDB_DUMP
     else {
         SPRTF("Unknown e_magic or machine value %u\n", eMagic);
         DWORD hlen = 32;
