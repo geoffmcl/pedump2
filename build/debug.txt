@@ -1,0 +1,6 @@
+
+D:\UTILS\tidy\tidy-html5\build\cmake\tidy-static.dir\Debug\tidy-static.pdb
+
+D:\FG\next2\scripts\build-fg64\utils\fgcom\RelWithDebInfo\fgcom.pdb
+
+D:\FG\next2\scripts\build-fg64\src\Main\RelWithDebInfo\fgfs.pdb
