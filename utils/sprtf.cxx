@@ -10,7 +10,8 @@
 #ifdef _MSC_VER
 #  pragma warning( disable : 4995 )
 #endif
-
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <stdio.h>  /* fopen()... */
 #include <string.h> /* strcpy */
 #include <stdarg.h> /* va_start, va_end, ... */
@@ -21,6 +22,7 @@
 #  if (defined(UNICODE) || defined(_UNICODE))
 #    include <Strsafe.h>
 #  endif
+#include <direct.h> // for _mkdir, ...
 #else /* !_MSC_VER */
 #  include <sys/time.h> /* gettimeoday(), struct timeval,... */
 #endif /* _MSC_VER y/n */
@@ -48,7 +50,15 @@
 #ifndef MX_BUFFERS
 #  define MX_BUFFERS 1024
 #endif
+#ifndef PATH_SEP
+#ifdef _WIN32
+#define PATH_SEP "\\"
+#else
+#define PATH_SEP "/"
+#endif
+#endif
 
+static char gszAppData[1024] = "\0";
 static char _s_strbufs[MX_ONE_BUF * MX_BUFFERS];
 static int iNextBuf = 0;
 
@@ -128,10 +138,167 @@ static const char *mode = "wb"; /* in window sprtf looks after the line endings 
 static const char *mode = "w";
 #endif
 
+#ifdef _WIN32
+#define M_IS_DIR _S_IFDIR
+#define mkdir _mkdir
+
+#else // !_MSC_VER
+#define M_IS_DIR S_IFDIR
+#endif
+
+#define MDT_NONE 0
+#define	MDT_FILE 1
+#define	MDT_DIR 2
+
+static struct stat buf;
+
+int is_file_or_directory(const char* path)
+{
+    if (!path)
+        return MDT_NONE;
+    if (stat(path, &buf) == 0)
+    {
+        if (buf.st_mode & M_IS_DIR)
+            return MDT_DIR;
+        else
+            return MDT_FILE;
+    }
+    return MDT_NONE;
+}
+
+size_t get_last_file_size() { return buf.st_size; }
+
+
+int create_dir(const char* pd)
+{
+    int iret = 1;
+    int res;
+    if (is_file_or_directory(pd) != MDT_DIR) {
+        size_t i, j, len = strlen(pd);
+        char ps, ch, pc = 0;
+        char tmp[260];
+        j = 0;
+        iret = 0;
+        tmp[0] = 0;
+#ifdef _WIN32
+        ps = '\\';
+#else
+        ps = '/'
+#endif
+
+            for (i = 0; i < len; i++) {
+                ch = pd[i];
+                if ((ch == '\\') || (ch == '/')) {
+                    ch = ps;
+                    if ((pc == 0) || (pc == ':')) {
+                        tmp[j++] = ch;
+                        tmp[j] = 0;
+                    }
+                    else {
+                        tmp[j] = 0;
+                        if (is_file_or_directory(tmp) != MDT_DIR) {
+                            res = mkdir(tmp);
+                            if (res != 0) {
+                                return 0; // FAILED
+                            }
+                            if (is_file_or_directory(tmp) != MDT_DIR) {
+                                return 0; // FAILED
+                            }
+                        }
+                        tmp[j++] = ch;
+                        tmp[j] = 0;
+                    }
+                }
+                else {
+                    tmp[j++] = ch;
+                    tmp[j] = 0;
+                }
+                pc = ch;
+            } // for lenght of path
+        if ((pc == '\\') || (pc == '/')) {
+            iret = 1; // success
+        }
+        else {
+            if (j && pc) {
+                tmp[j] = 0;
+                if (is_file_or_directory(tmp) == MDT_DIR) {
+                    iret = 1; // success
+                }
+                else {
+                    res = mkdir(tmp);
+                    if (res != 0) {
+                        return 0; // FAILED
+                    }
+                    if (is_file_or_directory(tmp) != MDT_DIR) {
+                        return 0; // FAILED
+                    }
+                    iret = 1; // success
+                }
+            }
+        }
+    }
+    return iret;
+}
+
+#ifdef _WIN32
+VOID  GetModulePath(LPTSTR lpb)
+{
+    LPTSTR   p;
+    GetModuleFileName(NULL, lpb, 256);
+    p = strrchr(lpb, '\\');
+    if (p)
+        p++;
+    else
+        p = lpb;
+    *p = 0;
+}
+#endif
+
+void GetAppData(PTSTR lpini)
+{
+    char* pd;
+    if (!gszAppData[0]) {
+        //pd = getenv("PROGRAMDATA"); // UGH - do not have permissions -  how to GET permissions
+        //if (!pd) {
+        //	pd = getenv("ALLUSERSPROFILE");
+        //}
+        pd = getenv("APPDATA");
+        if (!pd) {
+            pd = getenv("LOCALAPPDATA");
+        }
+        if (pd) {
+            strcpy(gszAppData, pd);
+            strcat(gszAppData, PATH_SEP);
+            strcat(gszAppData, "pedump2");
+            if (!create_dir(gszAppData)) {
+                gszAppData[0] = 0;
+            }
+            else {
+                strcat(gszAppData, PATH_SEP);
+            }
+        }
+    }
+
+    if (gszAppData[0]) {
+        strcpy(lpini, gszAppData);
+    }
+    else {
+#ifdef _WIN32
+        GetModulePath(lpini);    // does GetModuleFileName( NULL, lpini, 256 );
+#else
+        strcpy(lpini, "./");
+#endif
+    }
+}
+
+
 int   open_log_file( void )
 {
-   if (logfile[0] == 0)
-      strcpy(logfile,def_log);
+    if (logfile[0] == 0) 
+    {
+        GetAppData(logfile);
+        strcat(logfile, def_log);
+    }
    if (append_to_log) {
 #ifdef _MSC_VER
         mode = "ab"; /* in window sprtf looks after the line endings */
